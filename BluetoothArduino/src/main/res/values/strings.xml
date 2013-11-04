@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Bluetooth Arduino</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_connect">Connect to Device</string>
+    <string name="chk_box_backlight_text_on">Backlight On</string>
+    <string name="chk_box_backlight_text_off">Backlight Off</string>
+    <string name="alert_dialog_connect_title">Connect to Device</string>
+    <string name="alert_dialog_connect_negative">Cancel</string>
+    <string name="tv_paired_devices">Paired Devices</string>
+    <string name="tv_discovered_devices">Discovered Devices</string>
+
+</resources>
