@@ -116,6 +116,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
     }
 
     @Override
@@ -447,7 +448,8 @@ public class MainActivity extends ActionBarActivity {
         public void cancel() {
             try {
                 mmSocket.close();
-                connectedThread.cancel();
+                if (connectedThread != null)
+                    connectedThread.cancel();
             } catch (IOException e) {
             }
         }
