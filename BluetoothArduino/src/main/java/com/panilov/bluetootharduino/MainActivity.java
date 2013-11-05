@@ -49,6 +49,7 @@ public class MainActivity extends ActionBarActivity {
     private Handler mHandler;
     ConnectThread connectThread;
     ConnectedThread connectedThread;
+    private BroadcastReceiver mReceiverConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +82,8 @@ public class MainActivity extends ActionBarActivity {
                 switch (msg.what) {
                     case MESSAGE_READ:
                         byte[] readBuf = (byte[]) msg.obj;
-                        String strIncom = new String(readBuf, 0, msg.arg1);
-                        sb.append(strIncom);
+                        String strIn = new String(readBuf, 0, msg.arg1);
+                        sb.append(strIn);
                         int endOfLineIndex = sb.indexOf("\r\n");
                         if (endOfLineIndex > 0) {
                             String dataIn = sb.substring(0, endOfLineIndex);
@@ -103,6 +104,27 @@ public class MainActivity extends ActionBarActivity {
             }
         };
 
+        mReceiverConnection = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                // When discovery finds a device
+                if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                    Log.d(TAG, "----------Bluetooth Device Connected!!!!");
+                    Toast.makeText(MainActivity.this, "Bluetooth Device Connected!", Toast.LENGTH_SHORT).show();
+                } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                    Log.d(TAG, "----------Bluetooth Device Disconnected!!!!");
+                    Toast.makeText(MainActivity.this, "Bluetooth Device Disconnected!", Toast.LENGTH_SHORT).show();
+                    fragment.disableOnDisconnect();
+                }
+            }
+        };
+
+        IntentFilter filter_connected = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+        IntentFilter filter_disconnected = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+
+        registerReceiver(mReceiverConnection, filter_connected);
+        registerReceiver(mReceiverConnection, filter_disconnected);
+
     }
 
     @Override
@@ -117,6 +139,12 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiverConnection);
     }
 
     @Override
@@ -250,6 +278,16 @@ public class MainActivity extends ActionBarActivity {
             chkBoxBacklight.setChecked(chk);
         }
 
+        public void disableOnDisconnect() {
+            chk = false;
+            seek = false;
+            seekBarBacklight.setEnabled(seek);
+            seekBarBacklight.setProgress(0);
+            chkBoxBacklight.setEnabled(false);
+            chkBoxBacklight.setChecked(chk);
+            tvConn.setText("Disconnected");
+        }
+
         @Override
         public void onSaveInstanceState(Bundle outState) {
             super.onSaveInstanceState(outState);
@@ -259,7 +297,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public class ConnectDialog extends DialogFragment {
-        private IntentFilter filter, filter2;
+        private IntentFilter filter, filter2, filter3, filter4, filter5;
         private BroadcastReceiver mReceiver;
 
         public ConnectDialog() {
@@ -318,9 +356,7 @@ public class MainActivity extends ActionBarActivity {
                         BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                         // Add the name and address to an array adapter to show in a ListView
                         mArrayListDiscovered.add(new Item(device.getName(), device.getAddress()));
-
                         Toast.makeText(MainActivity.this, "Found: " + device.getName(), Toast.LENGTH_SHORT).show();
-
                         adapterDisc.notifyDataSetChanged();
                     } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                         progressBar.setVisibility(View.INVISIBLE);
