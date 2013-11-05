@@ -110,10 +110,10 @@ public class MainActivity extends ActionBarActivity {
                 // When discovery finds a device
                 if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
                     Log.d(TAG, "----------Bluetooth Device Connected!!!!");
-                    Toast.makeText(MainActivity.this, "Bluetooth Device Connected!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "Bluetooth Device Connected!", Toast.LENGTH_SHORT).show();
                 } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
                     Log.d(TAG, "----------Bluetooth Device Disconnected!!!!");
-                    Toast.makeText(MainActivity.this, "Bluetooth Device Disconnected!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "Bluetooth Device Disconnected!", Toast.LENGTH_SHORT).show();
                     fragment.disableOnDisconnect();
                 }
             }
@@ -361,7 +361,8 @@ public class MainActivity extends ActionBarActivity {
                     } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                         progressBar.setVisibility(View.INVISIBLE);
                         adapterDisc.notifyDataSetChanged();
-                        mBluetoothAdapter.cancelDiscovery();
+                        if (mBluetoothAdapter.isDiscovering())
+                            mBluetoothAdapter.cancelDiscovery();
                         Toast.makeText(MainActivity.this, "Finished Discovery!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -433,7 +434,8 @@ public class MainActivity extends ActionBarActivity {
         public void onDestroy() {
             super.onDestroy();
             unregisterReceiver(mReceiver);
-            mBluetoothAdapter.cancelDiscovery();
+            if (mBluetoothAdapter.isDiscovering())
+                mBluetoothAdapter.cancelDiscovery();
         }
     }
 
@@ -458,7 +460,8 @@ public class MainActivity extends ActionBarActivity {
 
         public void run() {
             // Cancel discovery because it will slow down the connection
-            mBluetoothAdapter.cancelDiscovery();
+            if (mBluetoothAdapter.isDiscovering())
+                mBluetoothAdapter.cancelDiscovery();
 
             try {
                 // Connect the device through the socket. This will block
