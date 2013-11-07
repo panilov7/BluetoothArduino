@@ -93,8 +93,7 @@ public class MainActivity extends ActionBarActivity {
                             sb.delete(0, sb.length());
                             if (parts[0].equals("Connected")) {
                                 fragment.tvConnSetText(parts[0] + " to " + connectThread.mmDevice.getName());
-                                int seekBarPos = Integer.valueOf(parts[1].substring(1));
-                                fragment.enableOnConnect(seekBarPos);
+                                fragment.enableOnConnect(parts[1].substring(1));
                             }
                             Log.d(TAG, "------------Data from Arduino: " + dataIn);
 
@@ -234,14 +233,14 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
-                        chkBoxBacklight.setText(R.string.chk_box_backlight_text_on);
+                        chkBoxBacklight.setText(R.string.chk_box_backlight_text_manual);
                         seekBarBacklight.setEnabled(true);
                         String s = "b" + seekBarBacklight.getProgress();
                         connectedThread.write(s.getBytes());
                     } else {
-                        chkBoxBacklight.setText(R.string.chk_box_backlight_text_off);
+                        chkBoxBacklight.setText(R.string.chk_box_backlight_text_auto);
                         seekBarBacklight.setEnabled(false);
-                        connectedThread.write("b0".getBytes());
+                        connectedThread.write("ba".getBytes());
                     }
                 }
             });
@@ -269,13 +268,24 @@ public class MainActivity extends ActionBarActivity {
             tvConn.setText(text);
         }
 
-        public void enableOnConnect(int seekBarPosition) {
-            chk = true;
-            seek = true;
-            seekBarBacklight.setEnabled(seek);
-            seekBarBacklight.setProgress(seekBarPosition);
-            chkBoxBacklight.setEnabled(true);
-            chkBoxBacklight.setChecked(chk);
+        public void enableOnConnect(String inVal) {
+            if (inVal.equals("a")) {
+                chk = false;
+                seek = false;
+                seekBarBacklight.setEnabled(seek);
+                seekBarBacklight.setProgress(0);
+                chkBoxBacklight.setEnabled(true);
+                chkBoxBacklight.setText(R.string.chk_box_backlight_text_auto);
+                chkBoxBacklight.setChecked(chk);
+            } else {
+                int seekBarPos = Integer.valueOf(inVal);
+                chk = true;
+                seek = true;
+                seekBarBacklight.setEnabled(seek);
+                seekBarBacklight.setProgress(seekBarPos);
+                chkBoxBacklight.setEnabled(true);
+                chkBoxBacklight.setChecked(chk);
+            }
         }
 
         public void disableOnDisconnect() {

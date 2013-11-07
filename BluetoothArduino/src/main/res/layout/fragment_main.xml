@@ -19,7 +19,7 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/chk_box_backlight_text_on"
+        android:text="@string/chk_box_backlight_text_manual"
         android:id="@+id/chkBoxBacklight"
         android:layout_alignTop="@+id/tvConnection"
         android:layout_alignParentLeft="true"
