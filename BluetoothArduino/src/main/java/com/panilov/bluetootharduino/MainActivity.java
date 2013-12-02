@@ -47,8 +47,8 @@ public class MainActivity extends ActionBarActivity {
     private BluetoothDevice mBluetoothDevice;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private Handler mHandler;
-    ConnectThread connectThread;
-    ConnectedThread connectedThread;
+    private ConnectThread connectThread;
+    private ConnectedThread connectedThread;
     private BroadcastReceiver mReceiverConnection;
 
     @Override
